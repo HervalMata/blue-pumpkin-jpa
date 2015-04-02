@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.png}"></link>
+	<link href="/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../static/css/core.css" th:href="@{/css/core.css}" rel="stylesheet"  type="text/css" media="screen" />
+     <!-- <script src="../../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script> -->
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <title>Home</title>
+</head>
+<body>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Teams</h4>
+            </div>
+            <div class="modal-body row" id="myModalBody">
+            	<th:block th:if="${sportsEvent != null}">
+            	<div class="col-md-6">
+            	<table class="table table-hover products-table">
+            		<thead>
+						<tr>
+			          		<th></th>
+			          		<th>Team 1</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr th:each="member,stat : ${sportsEvent.teams[0].employees}" style="min-height: 60px;">
+						<td th:text="${stat.count}+'.'"><small>1.</small></td>
+						<td th:text="${member.firstName}+' '+${member.lastName}"><small>Juraj Longo</small></td>
+						<td th:text="${member.position}">Manager</td>
+						<!-- <td th:text="${member.department}"><small>Marketing</small></td> -->
+					</tr>
+					</tbody>	
+				</table>
+				</div>
+				<div class="col-md-6">
+				<table class="table table-hover products-table">
+					<thead>
+						<tr>
+			          		<th>Team 2</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tr th:each="memb,stat : ${sportsEvent.teams[1].employees}" style="min-height: 60px;">
+						<td th:text="${memb.firstName}+' '+${memb.lastName}"><small>Juraj Longo</small></td>
+						<td th:text="${memb.position}">Manager</td>
+					</tr>	
+				</table>
+				</div>
+				</th:block>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal --> 
+
+<div class="wrap">
+<div th:include="layout :: head"></div>
+
+<div id="main">
+<div class="container-fluid">
+	<div th:include="layout :: left"></div>
+	<div class="jumbotron navbar-left">
+        <h3>Home</h3>
+        <p><small>View status of your participation requests</small></p>
+        <p>
+			<!-- <a class="btn btn-info btn-large" href="./home.html" th:href="@{/}">Home</a> -->
+			<a class="btn btn-primary btn-large" href="/logout" th:href="@{/logout}">Logout</a> <!-- href="page.html" -->
+        </p>
+    </div>
+    
+    <div class="col-md-3 pull-right">
+	<th:block th:unless="${#lists.isEmpty(birthdays)}">
+		<h4 class="text-center">Today's Birthdays</h4>
+		<table class="table table-hover table-condensed products-table" style="margin-bottom:8px;">
+			<tr th:each="employee,stat : ${birthdays}">
+				<td th:text="${employee.firstName}+' '+${employee.lastName}">Juraj Longo</td>
+				<!-- <td th:text="${employee.department}">Marketing</td> -->
+				<td th:text="${employee.position}">Manager</td>
+				<td>Age: <span class="badge" th:text="${employee.age}">52</span></td>
+			</tr>	
+		</table>
+	</th:block>
+	<th:block th:if="${#lists.isEmpty(birthdays)}">
+    		<div class="alert alert-info" style="margin-bottom:8px;">There are no birthdays today.</div>
+    </th:block>
+	</div>
+	
+    <div style="width: 1px; margin-bottom: -20px">&nbsp;</div>
+
+<!-- <div class="row">   --> 
+<div class="col-md-9"> <!-- col-md-12  style="min-height:350px;"-->
+
+	<th:block th:if="${message != null}">
+        <div th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=${message.message})">&nbsp;</div>
+    </th:block>
+	
+	<th:block th:if="${#lists.size(participations)} >= 1"> <!-- th:unless="${#lists.isEmpty(participations)}" -->
+    <table class="table table-hover products-table" style="margin-bottom:8px;">
+		<thead>
+			<tr>
+			    <th>Date</th>
+          		<th>Type</th>
+          		<th>Name</th>
+          		<th>Place</th>
+          		<th>Status</th>
+				<th>Cancel</th><!-- class="text-center" -->
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="p,stat : ${participations}">			
+				<td th:text="${#calendars.format(p.event.convertedDateTime,'dd. MMMM yyyy HH:mm')}">1. May 2014 10:00</td>
+				<td th:text="${p.event.type}">Meeting</td>
+				<td th:text="${p.event.name}">Annual Meeting</td>
+				<td th:text="${p.event.place}">Office</td>
+				<td th:switch="${p.status.id}">
+					  <div th:case="WAITING" class="label label-info" th:text="${p.status}">Waiting</div>
+					  <div th:case="APPROVED" class="label label-success" th:text="${p.status}">Approved</div>
+					  <div th:case="DENIED" class="label label-danger" th:text="${p.status}">Denied</div>
+					  <div th:case="*" class="label label-default">N/A</div>
+				</td>
+				<td th:if="${p.status.displayName != 'Denied'}">
+					<!-- "@{|/participations/${p.id}/cancel(page='home')|}" -->
+					<a th:href="@{/participations/{eventId}/{empId}/cancel(eventId=${p.eventId},empId=${p.employeeId},page='home')}" href="#" class="btn btn-large btn-danger">
+					<i class="glyphicon glyphicon-remove"></i></a>
+				</td>
+				<td th:if="${p.status.displayName == 'Denied'}"><a href="#" class="btn btn-large btn-danger" disabled="disabled"><i class="glyphicon glyphicon-remove"></i></a></td>
+			</tr>
+		</tbody>
+    </table>
+    </th:block>
+    
+    <th:block th:if="${#lists.isEmpty(participations)}">
+    	<div class="alert alert-warning">You have <strong>no</strong> participation requests.</div>
+    </th:block>
+</div> <!-- /.col-md-9 -->
+
+<div class="col-md-3 pull-right">
+	<th:block th:if="${sportsEvent != null}">
+		<h4 class="text-center">Recent Sports Event</h4>
+		<table class="table table-hover table-condensed products-table" style="margin-bottom:8px;">
+			<tr><td class="text-center" th:text="${#calendars.format(sportsEvent.convertedDateTime,'dd. MMMM yyyy HH:mm')}">1. May 2014 10:00</td></tr>
+			<tr><td class="text-center" th:text="${sportsEvent.name}">Football</td></tr>
+			<tr><td class="text-center" th:text="${sportsEvent.place}">Near Football Stadium</td></tr>
+			<tr><td class="text-center"><a href="#" data-toggle="modal" data-target="#myModal">
+				    <big><strong class="text-info" th:text="${sportsEvent.teams[0].score}+' : '+${sportsEvent.teams[1].score}">
+				    10 : 15</strong></big></a></td></tr>
+		</table>
+	</th:block>
+	<th:block th:if="${sportsEvent == null}">
+		<div class="alert alert-info" style="margin-bottom:8px;">There is no sports event.</div>
+	</th:block>
+</div>
+<!-- </div> --> <!-- /.row -->
+</div> <!-- /.container -->
+</div> <!-- /.main -->
+</div> <!-- /.wrap -->
+
+<div th:include="layout :: foot"></div>
+</body>
+</html>

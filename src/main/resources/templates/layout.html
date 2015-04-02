@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<body>
+
+<div th:fragment="head">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <th:block sec:authorize="hasRole('ROLE_USER')">
+                	<a class="navbar-brand" href="/">Blue Pumpkin</a>
+                </th:block>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                	<a class="navbar-brand" href="/admin">Blue Pumpkin</a>
+                </th:block>
+             </div>
+             <div class="navbar-collapse collapse">
+             	<th:block sec:authorize="hasRole('ROLE_USER')">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/upcomingEvents">Upcoming Events</a></li>
+                        <li><a href="/pastEvents">Past Events</a></li>
+                        <li><a href="/contacts">Contacts</a></li>
+                        <!-- <li><a href="/faqs" disabled="disabled">FAQs</a></li>
+                        <li><a href="/support" disabled="disabled">Support</a></li> -->
+                    </ul>
+                </th:block>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/admin">Home</a></li>
+                        <li><a href="/admin/accounts">Accounts</a></li>
+                        <li><a href="/admin/upcomingEvents">Upcoming Events</a></li>
+                        <li><a href="/admin/pastEvents">Past Events</a></li>
+                        <!-- <li><a href="/admin/faqs" disabled="disabled">FAQs</a></li> -->
+                    </ul>
+                </th:block>
+                    <ul class="nav navbar-nav navbar-right">
+                    	<!-- <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="./admin/home.html" th:href="@{/admin}">Admin</a></li> -->
+                		<li th:if="${#authorization.expression('!isAuthenticated()')}"><a href="./signin/signin.html" th:href="@{/signin}">Sign in</a></li>
+                		<li th:if="${#authorization.expression('isAuthenticated()')}"><a href="/logout" th:href="@{/logout}">Logout</a></li>
+            		</ul> 
+            </div> 
+            <!-- /.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div th:fragment="left">
+	<th:block th:if="${navigation == 'pages'}">
+	    <div class="well sidebar-nav navbar-left"> <!-- span3 -->
+	        <ul class="nav"><!--  nav-list -->
+	            <li>Blue Pumpkin</li><!-- nav-header -->
+	            <li><a href="/">Home</a></li>
+	            <li><a href="/upcomingEvents">Upcoming Events</a></li>
+	            <li><a href="/pastEvents">Past Events</a></li>
+	            <li><a href="/contacts">Contacts</a></li>
+	            <!-- <li><a href="/faqs">FAQs</a></li>
+                <li><a href="/support">Support</a></li> -->
+	        </ul>
+	    </div>
+    </th:block>
+    <th:block th:if="${navigation == 'adminPages'}">
+	    <div class="well sidebar-nav navbar-left"> <!-- span3 -->
+	        <ul class="nav"><!--  nav-list -->
+	            <li>Blue Pumpkin</li><!-- nav-header -->
+				<li><a href="/admin">Home</a></li>
+                <li><a href="/admin/accounts">Accounts</a></li>
+                <li><a href="/admin/upcomingEvents">Upcoming Events</a></li>
+                <li><a href="/admin/pastEvents">Past Events</a></li>
+                <!-- <li><a href="/admin/faqs">FAQs</a></li> -->
+	        </ul>
+	    </div>
+    </th:block>
+    
+    <th:block th:if="${navigation == 'upcomingEvents'}">
+	    <div class="well sidebar-nav navbar-left">
+	        <ul class="nav">
+	            <li>Categories</li>
+	            <li><a href="/upcomingEvents/meetings">Meetings</a></li>
+	            <li><a href="/upcomingEvents/trainings">Trainings</a></li>
+	            <li><a href="/upcomingEvents/sports">Sports</a></li>
+	            <li><a href="/upcomingEvents/trips">Trips</a></li>
+	        </ul>
+	    </div>
+    </th:block>
+    <th:block th:if="${navigation == 'pastEvents'}">
+	    <div class="well sidebar-nav navbar-left">
+	        <ul class="nav">
+	            <li>Categories</li>
+	            <li><a href="/pastEvents/meetings">Meetings</a></li>
+	            <li><a href="/pastEvents/trainings">Trainings</a></li>
+	            <li><a href="/pastEvents/sports">Sports</a></li>
+	            <li><a href="/pastEvents/trips">Trips</a></li>
+	        </ul>
+	    </div>
+    </th:block>
+    <!-- Contacts page -->
+    <th:block th:if="${navigation == 'departments'}">
+	    <div class="well sidebar-nav navbar-left">
+	        <ul class="nav">
+	            <li>Departments</li>
+	            <li><a href="/contacts/department1">Depatment1</a></li>
+	        </ul>
+	    </div>
+    </th:block>
+</div>
+
+<div th:fragment="foot">
+    <footer>
+    	<div class="container">
+        	<p>&copy; Blue Pumpkin 2015</p>
+        </div>	
+    </footer>
+</div>
+
+</body>
+
+</html>

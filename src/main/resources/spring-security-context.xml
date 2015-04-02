@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	
+	<security:http auto-config="true" disable-url-rewriting="true" use-expressions="true">
+		<security:form-login login-page="/signin" authentication-failure-url="/signin?error=1"/>
+		<security:logout logout-url="/logout" />
+		<security:remember-me services-ref="rememberMeServices" key="remember-me-key"/>
+		
+		<security:intercept-url pattern="/dbconsole/**" access="permitAll" />
+        <security:intercept-url pattern="/css/**" access="permitAll" />
+        <security:intercept-url pattern="/fonts/**" access="permitAll" />
+        <security:intercept-url pattern="/js/**" access="permitAll" />
+        <security:intercept-url pattern="/images/favicon.png" access="permitAll" />
+        <security:intercept-url pattern="/webjars/**" access="permitAll" />
+        <!-- <security:intercept-url pattern="/resources/**" access="permitAll" /> -->
+		<security:intercept-url pattern="/signin" access="permitAll" />
+		<security:intercept-url pattern="/signup" access="permitAll" />
+		
+		<security:intercept-url pattern="/" access="isAuthenticated()" />
+		<security:intercept-url pattern="/upcomingEvents" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/participations/*/doRequest" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/participations/*/cancel" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/pastEvents" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/contacts" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/faqs" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/support" access="hasRole('ROLE_USER')" />
+		
+		<security:intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/accounts" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/upcomingEvents" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/addEvent" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/updateEvent/*" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/deleteEvent/*" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/pastEvents" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/faqs" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/participations/*/approve" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/participations/*/deny" access="hasRole('ROLE_ADMIN')" />
+		
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
+	</security:http>
+	
+	<security:authentication-manager erase-credentials="true" >
+		<security:authentication-provider user-service-ref="userService">
+			<security:password-encoder ref="passwordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+</beans>
