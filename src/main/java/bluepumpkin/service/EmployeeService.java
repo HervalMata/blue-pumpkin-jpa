@@ -64,6 +64,7 @@ public class EmployeeService {
 		return eventRepository.findByType(SPORTSEVENT).stream()
 			.filter(e -> { 
 				List<Team> teams = new ArrayList<>(e.getTeams());
+				if (teams.isEmpty()) return false;
 				return teams.get(0).getScore() != null && teams.get(1).getScore() != null; 
 			})
 			.max((e1,e2) -> e1.getDateTime().compareTo(e2.getDateTime()))
