@@ -114,7 +114,6 @@ public class BluePumpkinJpaApplication {
 	}
 	
     public static void main(String[] args) {
-//    	Collections.
         SpringApplication.run(BluePumpkinJpaApplication.class, args);
     }
 }

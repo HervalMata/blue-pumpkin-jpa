@@ -21,9 +21,12 @@ import bluepumpkin.domain.Employee;
 import bluepumpkin.domain.Event;
 import bluepumpkin.domain.EventType;
 import bluepumpkin.domain.Participation;
+import bluepumpkin.domain.ParticipationId;
 import bluepumpkin.domain.ParticipationStatus;
 import bluepumpkin.domain.web.Birthday;
 import bluepumpkin.repository.EventRepository;
+import bluepumpkin.repository.ParticipationRepository;
+import bluepumpkin.repository.TeamRepository;
 import bluepumpkin.support.web.Message;
 //import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -32,6 +35,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -40,15 +45,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-//@Transactional
+@Transactional
 public class AdminControllerITests extends AbstractIntegrationTests {
 
 	private MvcResult mvcResult;
 	
 	@Autowired
 	private EventRepository eventRepository;
+	
+	@Autowired
+	private ParticipationRepository participationRepository;
+	
+	@Autowired
+	private TeamRepository teamRepository;
 	
 	@Test
 	public void adminHome() throws Exception {	
@@ -160,4 +172,67 @@ public class AdminControllerITests extends AbstractIntegrationTests {
 				.filter(fe -> fe.getField().equals(FIELD))
 				.forEach(fe -> assertThat(fe.getDefaultMessage()).isEqualTo(ERROR));
 	}
+	
+	@Test
+	public void initUpdateEventForm() throws Exception {
+		mockMvc.perform(get("/admin/updateEvent/{eventId}", 1L))
+			.andDo(print())
+			.andExpect(model().size(4))
+			.andExpect(content().string(containsString("<span>Update</span> event")))
+			.andExpect(content().string(containsString("name=\"convertedDateTime\" value=\"01-03-2015 09:30\"")))
+			.andExpect(content().string(containsString("<option value=\"SPORTSEVENT\" selected=\"selected\">Sports Event</option>")))
+			.andExpect(content().string(containsString("form=\"eventForm\" formaction=\"/admin/updateEvent\" formmethod=\"post\"")));
+	}
+	
+	@Test
+	public void processUpdateEventForm() throws Exception {
+		mvcResult = mockMvc.perform(post("/admin/updateEvent")
+			.param("id", "1")
+			.param("name", "Weekly Meeting")
+			.param("place", "Office")
+			.param("convertedDateTime", "01-10-2016 13:15")
+			.param("type", EventType.MEETING.getId()))
+			.andDo(print())
+			.andExpect(status().is(302))
+			.andExpect(flash().attributeExists("message"))
+			.andExpect(redirectedUrl("/admin/upcomingEvents"))
+			.andReturn();
+		
+		assertThat(((Message) mvcResult.getFlashMap().get("message"))
+				.getMessage()).isEqualTo("Event has been updated!");
+		assertThat(eventRepository.findOne(1L).getName()).isEqualTo("Weekly Meeting");
+	}
+	
+	@Test
+	public void deleteEventFloorball() throws Exception {
+		mockMvc.perform(get("/admin/deleteEvent/{id}", 1L)
+			.param("page", "pastEvents"))
+		.andDo(print())
+		.andExpect(status().is(302))
+		.andExpect(flash().attributeExists("message"))
+		.andExpect(redirectedUrl("/admin/pastEvents"))
+		.andExpect(header().string("Location", "/admin/pastEvents"));
+		
+		assertThat(teamRepository.findOne(1L)).isNull();
+		assertThat(teamRepository.findOne(4L)).isNull();
+		assertThat(teamRepository.findOne(6L).getEvent().getName()).isEqualTo("Baseball");
+		assertThat(participationRepository.findOne(new ParticipationId(1L, 1L))).isNull();
+		assertThat(participationRepository.findOne(new ParticipationId(1L, 2L))
+				.getEvent().getName()).isEqualTo("Annual Meeting");
+		assertThat(participationRepository.findAll()).hasSize(3);
+	}
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void getPastEvents() throws Exception {
+		mvcResult = mockMvc.perform(get("/admin/pastEvents"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().size(2))
+			.andReturn();
+		
+		assertThat(((List<Event>) mvcResult.getModelAndView().getModel()
+				.get("pastEvents")).get(0).getName()).isEqualTo("Floorball");
+	}
+	
 }

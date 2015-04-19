@@ -9,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -58,10 +60,7 @@ public class AdminController {
 	
 	@RequestMapping("addEvent")
 	public String initAddEventForm(Model model) {
-		model.addAttribute("form", "addEvent");
-		model.addAttribute("eventForm", new Event());
-		model.addAttribute("allTypes", EventType.values());
-		return "admin/eventForm";
+		return initEventForm("addEvent", null, model);
 	}
 	
 	@RequestMapping(value = "addEvent", method = RequestMethod.POST)
@@ -78,6 +77,55 @@ public class AdminController {
 		MessageHelper.addSuccessAttribute(redirectAttrs, "Event has been created!");
 		ModelAndView mv = new ModelAndView("redirect:/admin/upcomingEvents");
 		return mv;
+	}
+	
+	@RequestMapping(value = "updateEvent/{eventId}", method = RequestMethod.GET)
+	public String initUpdateEventForm(@PathVariable Long eventId, Model model) {
+		return initEventForm("updateEvent", eventId, model);
+	}
+	
+	@RequestMapping(value = "updateEvent", method = RequestMethod.POST) // PUT
+	public ModelAndView processUpdateEventForm(
+			@Valid @ModelAttribute("eventForm") Event event, // TODO EventDTO
+			Errors errors, RedirectAttributes redirectAttrs) {
+		if (errors.hasErrors()) {
+			ModelAndView mv = new ModelAndView("admin/eventForm");
+			mv.addObject("form", "updateEvent");
+			mv.addObject("allTypes", EventType.values());
+			return mv;
+		}
+		LOG.debug("No errors, continue with updating of event :{}", event.getName());
+		adminService.updateEvent(event);
+		MessageHelper.addSuccessAttribute(redirectAttrs, "Event has been updated!");
+		ModelAndView mv = new ModelAndView("redirect:/admin/upcomingEvents");
+		return mv;
+	}
+	
+	@RequestMapping(value = "deleteEvent/{id}", method = RequestMethod.GET)
+	public String deleteEvent(@PathVariable Long id, @RequestParam("page") String page, RedirectAttributes redirectAttrs) {
+		adminService.deleteEvent(id);
+		MessageHelper.addSuccessAttribute(redirectAttrs, "Event has been deleted!");
+		if (page.equals("upcomingEvents"))
+			 return "redirect:/admin/upcomingEvents";
+		return "redirect:/admin/pastEvents";
+	}
+	
+	@RequestMapping(value = "pastEvents", method = RequestMethod.GET)
+	public String getPastEvents(Model model) {
+		LOG.debug("All past events");
+		model.addAttribute("pastEvents", adminService.getPastEvents());
+		return "admin/pastEvents";
+	}	
+	
+	private String initEventForm(String formType, Long eventId, Model model) {
+		if (formType.equals("addEvent"))
+			model.addAttribute("eventForm", new Event());
+		else // if equals "updateEvent"
+//			TODO get EventDTO
+			model.addAttribute("eventForm", adminService.getEvent(eventId));
+		model.addAttribute("allTypes", EventType.values());	
+		model.addAttribute("form", formType);
+		return "admin/eventForm";
 	}
 	
 }

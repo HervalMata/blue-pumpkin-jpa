@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+	<link href="/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../static/css/core.css" th:href="@{/css/core.css}" rel="stylesheet"  type="text/css" media="screen" />
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <title>Past Events</title>
+</head>
+<body>
+
+<div class="wrap">
+<div th:include="layout :: head"></div>
+
+<div id="main">
+<div class="container-fluid">
+	<div th:include="layout :: left"></div>
+	<div class="jumbotron navbar-left">
+        <h3>Past Events</h3>
+        <p><small>View all past events</small></p>
+        <p>
+			<a class="btn btn-info btn-large" href="./home.html" th:href="@{/admin}">Home</a>
+			<a class="btn btn-primary btn-large" href="#" th:href="@{/logout}">Logout</a>
+        </p>
+    </div>
+    <div style="width: 1px; margin-bottom: -20px">&nbsp;</div>
+    
+    <th:block th:if="${message != null}">
+        <div th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=${message.message})">&nbsp;</div>
+    </th:block>
+
+<div> <!-- col-md-12 -->
+	<th:block th:if="${#lists.size(pastEvents)} >= 1"> <!-- th:unless="${#lists.isEmpty(...)}" -->
+    <table class="table table-hover products-table" style="margin-bottom:8px;">
+		<thead>
+			<tr>
+			    <th>Date</th>
+          		<th>Type</th>
+          		<th>Name</th>
+          		<th>Place</th>
+          		<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="e,stat : ${pastEvents}">
+				<td th:text="${#calendars.format(e.convertedDateTime,'dd. MMMM yyyy HH:mm')}">1. May 2014 10:00</td>
+				<td th:text="${e.type}">Meeting</td>
+				<td th:text="${e.name}">Annual Meeting</td>
+				<td th:text="${e.place}">Office</td>
+				<td>
+					<a th:href="@{/admin/deleteEvent/{id}(id=${e.id},page='pastEvents')}" href="#" class="btn btn-large btn-danger">
+					<i class="glyphicon glyphicon-trash"></i></a>
+				</td>
+			</tr>
+		</tbody>
+    </table>
+    </th:block>
+    <th:block th:if="${#lists.isEmpty(pastEvents)}">
+    	<div class="alert alert-warning">There are <strong>no</strong> past events.</div>
+    </th:block>
+</div> <!-- /.col-md-12 -->
+
+</div> <!-- /.container -->
+</div> <!-- /.main -->
+</div> <!-- /.wrap -->
+
+<div th:include="layout :: foot"></div>
+</body>
+</html>

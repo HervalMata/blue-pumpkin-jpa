@@ -60,4 +60,27 @@ public class AdminService {
 		eventRepository.save(event);
 	}
 
+	public Event getEvent(Long eventId) {
+		Event event = eventRepository.findOne(eventId);
+		event.convertToDateType();
+		return event;
+	}
+
+	public void updateEvent(Event event) {
+		event.convertToLocalDateTimeType();
+		eventRepository.save(event);
+	}
+
+	public void deleteEvent(Long id) {
+		eventRepository.delete(id);
+	}
+
+	public List<Event> getPastEvents() {
+		List<Event> pastEvents = eventRepository.findAll().stream()
+			.filter(e -> e.getDateTime().compareTo(LocalDateTime.now()) < 0)
+			.collect(collectingAndThen(toList(), this::sortEventsByDateTime));
+		Collections.reverse(pastEvents);
+		return pastEvents;
+	}
+
 }

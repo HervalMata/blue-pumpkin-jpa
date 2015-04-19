@@ -82,7 +82,7 @@
             	<!-- "@{/admin/updateEvent/{id}(id=${eventForm.id})}" --> <!-- "@{|/admin/updateEvent/${eventForm.id}|}" -->
             	<th:block th:if="${form == 'updateEvent'}">
             		<button type="submit" th:form="eventForm" th:formaction="@{/admin/updateEvent}" 
-            			class="btn btn-primary">Update Event
+            			th:formmethod="post" class="btn btn-primary">Update Event
             		</button> 
             	</th:block>
             	<th:block th:if="${form == 'addEvent'}">

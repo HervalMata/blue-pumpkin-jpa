@@ -23,8 +23,8 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		
 		<security:intercept-url pattern="/" access="isAuthenticated()" />
 		<security:intercept-url pattern="/upcomingEvents" access="hasRole('ROLE_USER')" />
-		<security:intercept-url pattern="/participations/*/doRequest" access="hasRole('ROLE_USER')" />
-		<security:intercept-url pattern="/participations/*/cancel" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/participations/*/*/doRequest" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/participations/*/*/cancel" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/pastEvents" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/contacts" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/faqs" access="hasRole('ROLE_USER')" />
@@ -35,11 +35,12 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		<security:intercept-url pattern="/admin/upcomingEvents" access="hasRole('ROLE_ADMIN')" />
 		<security:intercept-url pattern="/admin/addEvent" access="hasRole('ROLE_ADMIN')" />
 		<security:intercept-url pattern="/admin/updateEvent/*" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/updateEvent" access="hasRole('ROLE_ADMIN')" />
 		<security:intercept-url pattern="/admin/deleteEvent/*" access="hasRole('ROLE_ADMIN')" />
 		<security:intercept-url pattern="/admin/pastEvents" access="hasRole('ROLE_ADMIN')" />
 		<security:intercept-url pattern="/admin/faqs" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/admin/participations/*/approve" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/admin/participations/*/deny" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/participations/*/*/approve" access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/participations/*/*/deny" access="hasRole('ROLE_ADMIN')" />
 		
 		<security:intercept-url pattern="/**" access="isAuthenticated()" />
 	</security:http>
