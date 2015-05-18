@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+	<link href="/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../static/css/core.css" th:href="@{/css/core.css}" rel="stylesheet"  type="text/css" media="screen" />
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <title>Accounts</title>
+</head>
+<body>
+
+<div class="wrap">
+<div th:include="layout :: head"></div>
+
+<div id="main">
+<div class="container-fluid">
+	<div th:include="layout :: left"></div>
+	<div class="jumbotron navbar-left">
+        <h3>Accounts</h3>
+        <p><small>View all employee accounts</small></p>
+        <p>
+			<a class="btn btn-info btn-large" href="./home.html" th:href="@{/admin}">Home</a>
+			<a class="btn btn-primary btn-large" href="#" th:href="@{/logout}">Logout</a>
+        </p>
+    </div>
+    <div style="width: 1px; margin-bottom: -20px">&nbsp;</div>
+    
+    <th:block th:if="${message != null}">
+        <div th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=${message.message})">&nbsp;</div>
+    </th:block>
+
+<div> <!-- col-md-12 -->
+	<!-- <a th:href="@{/admin/addAccount}" href="#" class="btn btn-large btn-success">
+		Add Account
+	</a> -->
+	<th:block th:if="${#lists.size(accounts)} >= 1"> <!-- th:unless="${#lists.isEmpty(...)}" -->
+    <table class="table table-hover products-table" style="margin-bottom:8px;">
+		<thead>
+			<tr>
+				<th>Employee</th>
+          		<th>Position</th>
+          		<th>Department</th>
+          		<th>Telephone</th>
+          		<th>Email</th>
+          		<th>Date of Birth</th>
+          		<!-- <th>Update</th>
+          		<th>Delete</th> -->
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="a,stat : ${accounts}">
+				<td th:text="${a.firstName}+' '+${a.lastName}">Juraj Longo</td>
+				<td th:text="${a.position}">Manager</td>
+				<td th:text="${a.department}">Marketing</td>
+				<td th:text="${a.telephone}">191708654333</td>
+				<td th:text="${a.account.email}">juraj.longo@bluepumpkin.com</td>
+				<td th:text="${#calendars.format(a.convertedDateOfBirth,'dd. MMMM yyyy')}">1. May 2014</td>
+				<!-- <td>
+					<a th:href="@{/admin/updateAccount/{id}(id=${a.id})}" href="#" class="btn btn-large btn-primary">
+					<big class="glyphicon glyphicon-pencil"></big></a>
+				</td>
+				<td>
+					<a th:href="@{/admin/deleteAccount/{id}(id=${a.id})}" href="#" class="btn btn-large btn-danger">
+					<big class="glyphicon glyphicon-trash"></big></a>
+				</td> -->
+			</tr>
+		</tbody>
+    </table>
+    </th:block>
+    <th:block th:if="${#lists.isEmpty(accounts)}">
+    	<div class="alert alert-warning">There are <strong>no</strong> accounts.</div>
+    </th:block>
+</div> <!-- /.col-md-12 -->
+
+</div> <!-- /.container -->
+</div> <!-- /.main -->
+</div> <!-- /.wrap -->
+
+<div th:include="layout :: foot"></div>
+</body>
+</html>

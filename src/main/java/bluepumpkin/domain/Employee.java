@@ -6,6 +6,9 @@ import static javax.persistence.CascadeType.REFRESH;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,8 +19,12 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
+
 import bluepumpkin.domain.Team;
+
 import java.util.List;
+
 import javax.persistence.ManyToMany;
 
 @SuppressWarnings("serial")
@@ -44,6 +51,9 @@ public class Employee implements Serializable {
 	
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+	
+	@Transient
+	private Date convertedDateOfBirth;
 	
 	@OneToOne(optional = false, orphanRemoval = true, cascade = { MERGE, REFRESH })
 	@MapsId("id")
@@ -75,6 +85,16 @@ public class Employee implements Serializable {
 		this.department = department;
 		this.telephone = telephone;
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public void convertToDateType() {
+		this.convertedDateOfBirth = Date.from(this.dateOfBirth
+			.atStartOfDay(ZoneId.systemDefault())
+			.toInstant());
+	}
+	
+	public Date getConvertedDateOfBirth() {
+		return this.convertedDateOfBirth;
 	}
 
 	public Long getId() {

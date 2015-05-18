@@ -2,13 +2,20 @@ package bluepumpkin.service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import bluepumpkin.domain.Employee;
 import bluepumpkin.domain.Event;
 import bluepumpkin.domain.Participation;
+import bluepumpkin.domain.ParticipationId;
+import bluepumpkin.domain.ParticipationStatus;
+import bluepumpkin.repository.EmployeeRepository;
 import bluepumpkin.repository.EventRepository;
 import bluepumpkin.repository.ParticipationRepository;
 import static bluepumpkin.domain.ParticipationStatus.*;
@@ -20,12 +27,14 @@ public class AdminService {
 
 	private final ParticipationRepository participationRepository;
 	private final EventRepository eventRepository;
+	private final EmployeeRepository employeeRepository;
 	
 	@Autowired
 	public AdminService(ParticipationRepository participationRepository,
-			EventRepository eventRepository) {
+			EventRepository eventRepository, EmployeeRepository employeeRepository) {
 		this.participationRepository = participationRepository;
 		this.eventRepository = eventRepository;
+		this.employeeRepository = employeeRepository;
 	}
 
 	public List<Participation> getFutureWaitingParticipations() {
@@ -38,6 +47,13 @@ public class AdminService {
 	private List<Participation> convertPartEventDateTimesToDateType(List<Participation> participations) {
 		participations.forEach(p -> p.getEvent().convertToDateType());
 		return participations;
+	}
+	
+	public void changeParticipationStatus(Long eventId, Long empId, ParticipationStatus status) {
+		ParticipationId id = new ParticipationId(empId, eventId);
+		Participation p = participationRepository.findOne(id);
+		p.setStatus(status);
+		participationRepository.save(p);
 	}
 
 	public List<Event> getUpcomingEvents() {
@@ -81,6 +97,20 @@ public class AdminService {
 			.collect(collectingAndThen(toList(), this::sortEventsByDateTime));
 		Collections.reverse(pastEvents);
 		return pastEvents;
+	}
+
+	public List<Employee> getAccounts() {
+		Comparator<Employee> byLastName = (c1, c2) -> c1.getLastName()
+	            .compareTo(c2.getLastName());
+		Comparator<Employee> byDepartment = (c1, c2) -> c1.getDepartment()
+	            .compareTo(c2.getDepartment());
+		return employeeRepository.findAll().stream()
+				.sorted(byDepartment.thenComparing(byLastName))
+				.collect(collectingAndThen(toList(), this::convertDatesOfBirthToDateType));
+	}
+	private List<Employee> convertDatesOfBirthToDateType(List<Employee> employees) {
+		employees.forEach(e -> e.convertToDateType());
+		return employees;
 	}
 
 }

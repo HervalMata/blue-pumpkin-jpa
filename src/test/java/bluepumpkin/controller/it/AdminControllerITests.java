@@ -235,4 +235,12 @@ public class AdminControllerITests extends AbstractIntegrationTests {
 				.get("pastEvents")).get(0).getName()).isEqualTo("Floorball");
 	}
 	
+	@Test
+	public void getAccounts() throws Exception {
+		mockMvc.perform(get("/admin/accounts"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().size(2));
+	}
+	
 }

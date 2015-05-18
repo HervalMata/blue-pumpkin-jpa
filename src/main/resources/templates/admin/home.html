@@ -85,11 +85,11 @@
 					<span th:unless="${#strings.contains(p.employee.account.email, '@')}" th:text="${p.employee.account.email}">user</span>
 				</td>
 				<td>
-					<a th:href="@{/admin/participations/{eventId}/{empId}/approve(eventId=${p.eventId}, empId=${p.employeeId})}" href="#" class="btn btn-large btn-success">
+					<a th:href="@{/admin/participations/{eventId}/{empId}(eventId=${p.eventId}, empId=${p.employeeId}, action='approve')}" href="#" class="btn btn-success"> <!-- btn-sm -->
 					<i class="glyphicon glyphicon-ok"></i></a>
 				</td>
 				<td>
-					<a th:href="@{/admin/participations/{eventId}/{empId}/deny(eventId=${p.eventId}, empId=${p.employeeId})}" href="#" class="btn btn-large btn-danger">
+					<a th:href="@{/admin/participations/{eventId}/{empId}(eventId=${p.eventId}, empId=${p.employeeId}, action='deny')}" href="#" class="btn btn-large btn-danger">
 					<i class="glyphicon glyphicon-remove"></i></a>
 				</td>
 			</tr>

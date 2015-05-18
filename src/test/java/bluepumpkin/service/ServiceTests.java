@@ -2,6 +2,8 @@ package bluepumpkin.service;
 
 import static org.junit.Assert.*;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -37,6 +39,13 @@ public class ServiceTests {
 	public void convertingFromDateToLocalDateTime() {
 		LocalDateTime d = LocalDateTime.from(new Date().toInstant()
 				.atZone(ZoneId.systemDefault()));
+		System.out.println(d);
+	}
+	
+	@Test
+	public void convertingFromLocalDateToDate() {
+		LocalDate ld = LocalDate.of(2015, 3, 1);
+		Date d = Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		System.out.println(d);
 	}
 
