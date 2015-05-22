@@ -5,6 +5,7 @@ package bluepumpkin.domain;
  */
 public enum ParticipationStatus {
 
+	NOTREQUESTED(""),
 	WAITING("Waiting"),
 	APPROVED("Approved"),
 	DENIED("Denied");

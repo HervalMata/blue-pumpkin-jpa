@@ -22,8 +22,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		<security:intercept-url pattern="/signup" access="permitAll" />
 		
 		<security:intercept-url pattern="/" access="isAuthenticated()" />
-		<security:intercept-url pattern="/participations/*/*/doRequest" access="hasRole('ROLE_USER')" />
-		<security:intercept-url pattern="/participations/*/*/cancel" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/participations/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/upcomingEvents" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/pastEvents" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/contacts" access="hasRole('ROLE_USER')" />

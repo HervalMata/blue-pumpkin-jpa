@@ -49,6 +49,10 @@ import bluepumpkin.domain.web.Birthday;
 //@Transactional
 public class EmployeeControllerITests {
 	
+	private final static int UPC_EVENTS_SIZE = 3;
+	private final static long SAM_ID = 1L;
+	private final static long MEETING_ID = 2L;
+	
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 	
@@ -145,6 +149,22 @@ public class EmployeeControllerITests {
 		assertThat(mvcResult.getResolvedException().toString()).containsOnlyOnce("EmployeeNotFoundException");
 //		assertThat(mvcResult.getResolvedException().getClass().getName()).isEqualTo("bluepumpkin.domain.EmployeeNotFoundException");
 		assertThat(mvcResult.getResolvedException().getMessage()).isEqualTo("Could not find employee '" + 20L + "'.");
+	}
+	
+	@Test
+	public void getUpcomingEvents() throws Exception {
+		mockMvc.perform(get("/upcomingEvents"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("upcomingEvents", hasSize(UPC_EVENTS_SIZE)));
+	}
+	
+	@Test
+	public void requestForParticipation_pageRequestParamNotRequired() throws Exception {
+		mockMvc.perform(get("/participations/{eventId}", MEETING_ID)
+			.param("action", "doRequest"))
+			.andDo(print())
+			.andExpect(status().is(302));
 	}
 	
 }

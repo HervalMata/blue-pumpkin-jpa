@@ -54,8 +54,8 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "participations/{eventId}/{empId}", method = RequestMethod.GET)
-	public String approveParticipation(@PathVariable Long eventId, @PathVariable Long empId, 
-			@RequestParam String action, RedirectAttributes redirectAttrs) { //@RequestParam("action")
+	public String approveOrDenyParticipationRequest(@PathVariable Long eventId, @PathVariable Long empId, 
+			@RequestParam String action, RedirectAttributes redirectAttrs) {
 		StringBuilder sb = new StringBuilder("The participation request has been ");
 		if (action.equalsIgnoreCase("approve")) {
 			adminService.changeParticipationStatus(eventId, empId, APPROVED);
@@ -131,22 +131,22 @@ public class AdminController {
 	@RequestMapping(value = "pastEvents", method = RequestMethod.GET)
 	public String getPastEvents(Model model) {
 		LOG.info("All past events");
-		model.addAttribute("pastEvents", adminService.getPastEvents());
+		model.addAttribute("pastEvents", commonService.getPastEvents());
 		return "admin/pastEvents";
 	}	
 	
-	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
+	@RequestMapping(value = "accounts", method = RequestMethod.GET)
 	public String getAccounts(Model model) {
 		LOG.info("All accounts");
-		model.addAttribute("accounts", adminService.getAccounts());
+		model.addAttribute("accounts", commonService.getAccounts());
 		return "admin/accounts";
 	}
 	
 	private String initEventForm(String formType, Long eventId, Model model) {
 		if (formType.equals("addEvent"))
 			model.addAttribute("eventForm", new Event());
-		else // if equals "updateEvent"
-//			TODO get EventDTO
+		else if (formType.equals("updateEvent"))
+//			TODO add EventDTO
 			model.addAttribute("eventForm", adminService.getEvent(eventId));
 		model.addAttribute("allTypes", EventType.values());	
 		model.addAttribute("form", formType);

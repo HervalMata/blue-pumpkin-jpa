@@ -27,48 +27,36 @@ public class AdminService {
 
 	private final ParticipationRepository participationRepository;
 	private final EventRepository eventRepository;
-	private final EmployeeRepository employeeRepository;
 	
 	@Autowired
 	public AdminService(ParticipationRepository participationRepository,
-			EventRepository eventRepository, EmployeeRepository employeeRepository) {
+			EventRepository eventRepository) {
 		this.participationRepository = participationRepository;
 		this.eventRepository = eventRepository;
-		this.employeeRepository = employeeRepository;
 	}
 
 	public List<Participation> getFutureWaitingParticipations() {
 		List<Participation> participations = participationRepository.findByStatus(WAITING).stream()
 		.filter(p -> p.getEvent().getDateTime().compareTo(LocalDateTime.now()) > 0)
-		.collect(collectingAndThen(toList(), this::convertPartEventDateTimesToDateType));
+		.collect(collectingAndThen(toList(), this::convertEventDateTimesToDateType));
 		Collections.reverse(participations);
 		return participations;
 	}
-	private List<Participation> convertPartEventDateTimesToDateType(List<Participation> participations) {
+	private List<Participation> convertEventDateTimesToDateType(List<Participation> participations) {
 		participations.forEach(p -> p.getEvent().convertToDateType());
 		return participations;
 	}
 	
 	public void changeParticipationStatus(Long eventId, Long empId, ParticipationStatus status) {
-		ParticipationId id = new ParticipationId(empId, eventId);
-		Participation p = participationRepository.findOne(id);
+		Participation p = participationRepository.findOne(new ParticipationId(empId, eventId));
 		p.setStatus(status);
 		participationRepository.save(p);
 	}
-
-	public List<Event> getUpcomingEvents() {
+	
+	public List<Event> getUpcomingEvents() { 
 		return eventRepository.findAll().stream()
 			.filter(e -> e.getDateTime().compareTo(LocalDateTime.now()) > 0)
-			.collect(collectingAndThen(toList(), this::sortEventsByDateTime));
-	}
-	private List<Event> sortEventsByDateTime(List<Event> events) {
-		return events.stream()
-			.sorted((e1, e2) -> e1.getDateTime().compareTo(e2.getDateTime()))
-			.collect(collectingAndThen(toList(), this::convertEventDateTimesToDateType));	
-	}
-	private List<Event> convertEventDateTimesToDateType(List<Event> events) {
-		events.forEach(e -> e.convertToDateType());
-		return events;
+			.collect(collectingAndThen(toList(), CommonService::sortEventsByDateTime));
 	}
 
 	public void createEvent(Event event) {
@@ -89,28 +77,6 @@ public class AdminService {
 
 	public void deleteEvent(Long id) {
 		eventRepository.delete(id);
-	}
-
-	public List<Event> getPastEvents() {
-		List<Event> pastEvents = eventRepository.findAll().stream()
-			.filter(e -> e.getDateTime().compareTo(LocalDateTime.now()) < 0)
-			.collect(collectingAndThen(toList(), this::sortEventsByDateTime));
-		Collections.reverse(pastEvents);
-		return pastEvents;
-	}
-
-	public List<Employee> getAccounts() {
-		Comparator<Employee> byLastName = (c1, c2) -> c1.getLastName()
-	            .compareTo(c2.getLastName());
-		Comparator<Employee> byDepartment = (c1, c2) -> c1.getDepartment()
-	            .compareTo(c2.getDepartment());
-		return employeeRepository.findAll().stream()
-				.sorted(byDepartment.thenComparing(byLastName))
-				.collect(collectingAndThen(toList(), this::convertDatesOfBirthToDateType));
-	}
-	private List<Employee> convertDatesOfBirthToDateType(List<Employee> employees) {
-		employees.forEach(e -> e.convertToDateType());
-		return employees;
 	}
 
 }

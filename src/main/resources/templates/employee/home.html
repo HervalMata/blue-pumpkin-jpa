@@ -129,9 +129,12 @@
 					  <div th:case="*" class="label label-default">N/A</div>
 				</td>
 				<td th:if="${p.status.displayName != 'Denied'}">
-					<!-- "@{|/participations/${p.id}/cancel(page='home')|}" -->
-					<a th:href="@{/participations/{eventId}/{empId}/cancel(eventId=${p.eventId},empId=${p.employeeId},page='home')}" href="#" class="btn btn-large btn-danger">
-					<i class="glyphicon glyphicon-remove"></i></a>
+					<!-- "@{|/participations/${p.eventId}/cancel|(page='home')}" -->
+					<!-- <"@{/participations/{eventId}/cancel(eventId=${p.eventId},page='home')}" -->
+					<a th:href="@{|/participations/${p.eventId}|(action='cancel',page='home')}" 
+						href="#" class="btn btn-large btn-danger">
+						<i class="glyphicon glyphicon-remove"></i>
+					</a>
 				</td>
 				<td th:if="${p.status.displayName == 'Denied'}"><a href="#" class="btn btn-large btn-danger" disabled="disabled"><i class="glyphicon glyphicon-remove"></i></a></td>
 			</tr>
@@ -157,7 +160,7 @@
 		</table>
 	</th:block>
 	<th:block th:if="${sportsEvent == null}">
-		<div class="alert alert-info" style="margin-bottom:8px;">There is no sports event.</div>
+		<div class="alert alert-info" style="margin-bottom:8px;">There is no recent sports event.</div>
 	</th:block>
 </div>
 <!-- </div> --> <!-- /.row -->

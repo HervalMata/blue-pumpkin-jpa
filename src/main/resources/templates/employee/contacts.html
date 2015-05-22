@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+	<link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.png}"></link>
 	<link href="/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../../static/css/core.css" th:href="@{/css/core.css}" rel="stylesheet"  type="text/css" media="screen" />
 	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <title>Accounts</title>
+    <title>Contacts</title>
 </head>
 <body>
 
@@ -18,10 +18,10 @@
 <div class="container-fluid">
 	<div th:include="layout :: left"></div>
 	<div class="jumbotron navbar-left">
-        <h3>Accounts</h3>
-        <p><small>View all employee accounts</small></p>
+        <h3>Contacts</h3>
+        <p><small>View contacts of all employees</small></p>
         <p>
-			<a class="btn btn-info btn-large" href="./home.html" th:href="@{/admin}">Home</a>
+			<a class="btn btn-info btn-large" href="./home.html" th:href="@{/}">Home</a>
 			<a class="btn btn-primary btn-large" href="#" th:href="@{/logout}">Logout</a>
         </p>
     </div>
@@ -32,10 +32,7 @@
     </th:block>
 
 <div> <!-- col-md-12 -->
-	<!-- <a th:href="@{/admin/addAccount}" href="#" class="btn btn-large btn-success">
-		Add Account
-	</a> -->
-	<th:block th:if="${#lists.size(accounts)} >= 1"> <!-- th:unless="${#lists.isEmpty(...)}" -->
+	<th:block th:if="${#lists.size(contacts)} >= 1">
     <table class="table table-hover products-table" style="margin-bottom:8px;">
 		<thead>
 			<tr>
@@ -44,33 +41,23 @@
           		<th>Department</th>
           		<th>Telephone</th>
           		<th>Email</th>
-          		<th>Date of Birth</th>
-          		<!-- <th>Update</th>
-          		<th>Delete</th> -->
+          		<!-- <th>Date of Birth</th> -->
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="a,stat : ${accounts}">
-				<td th:text="${a.firstName}+' '+${a.lastName}">Juraj Longo</td>
-				<td th:text="${a.position}">Manager</td>
-				<td th:text="${a.department}">Marketing</td>
-				<td th:text="${a.telephone}">191708654333</td>
-				<td th:text="${a.account.email}">juraj.longo@bluepumpkin.com</td>
-				<td th:text="${#calendars.format(a.convertedDateOfBirth,'dd. MMMM yyyy')}">1. May 2014</td>
-				<!-- <td>
-					<a th:href="@{/admin/updateAccount/{id}(id=${a.id})}" href="#" class="btn btn-large btn-primary">
-					<i class="glyphicon glyphicon-pencil"></i></a>
-				</td>
-				<td>
-					<a th:href="@{/admin/deleteAccount/{id}(id=${a.id})}" href="#" class="btn btn-large btn-danger">
-					<i class="glyphicon glyphicon-trash"></i></a>
-				</td> -->
+			<tr th:each="c,stat : ${contacts}">
+				<td th:text="${c.firstName}+' '+${c.lastName}">Juraj Longo</td>
+				<td th:text="${c.position}">Manager</td>
+				<td th:text="${c.department}">Marketing</td>
+				<td th:text="${c.telephone}">191708654333</td>
+				<td th:text="${c.account.email}">juraj.longo@bluepumpkin.com</td>
+				<!-- <td th:text="${#calendars.format(c.convertedDateOfBirth,'dd. MMMM yyyy')}">1. May 1983</td> -->
 			</tr>
 		</tbody>
     </table>
     </th:block>
-    <th:block th:if="${#lists.isEmpty(accounts)}">
-    	<div class="alert alert-warning">There are <strong>no</strong> accounts.</div>
+    <th:block th:if="${#lists.isEmpty(contacts)}">
+    	<div class="alert alert-warning">There are <strong>no</strong> contacts.</div>
     </th:block>
 </div> <!-- /.col-md-12 -->
 
