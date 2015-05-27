@@ -51,6 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AdminControllerITests extends AbstractIntegrationTests {
 
+	private static final int YEAR_FUTURE = 2025;
+	
 	private MvcResult mvcResult;
 	
 	@Autowired
@@ -78,7 +80,7 @@ public class AdminControllerITests extends AbstractIntegrationTests {
 		
 		Participation p = new Participation(2L, 4L, ParticipationStatus.WAITING, 
 				new Employee("Barry", "Firefly"), 
-				new Event("Sightseeing Trip", LocalDateTime.of(2015, 7, 1, 9, 30)));
+				new Event("Sightseeing Trip", LocalDateTime.of(YEAR_FUTURE, 7, 1, 9, 30)));
 		@SuppressWarnings("unchecked")
 		List<Participation> mAttrParticipations = (List<Participation>) mvcResult.getModelAndView()
 				.getModel().get("participations");

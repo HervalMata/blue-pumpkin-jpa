@@ -55,6 +55,9 @@ public class BluePumpkinJpaApplication {
 			final String ac_d = "Accounting Department";
 			final String it_d = "IT Department";
 			
+			final int yearPast = 2015;
+			final int yearFuture = 2025;
+			
 			final List<String> emails = Arrays.asList("sam.brown@bluepumpkin.com,barry.firefly@bluepumpkin.com".split(","));
 			
 			final List<String> firstNames = Arrays.asList("Sam,Barry".split(","));
@@ -66,15 +69,16 @@ public class BluePumpkinJpaApplication {
 					LocalDate.of(1974, LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()),
 					LocalDate.of(1976, 9, 16));
 			
-			List<EventType> types = Arrays.asList(SPORTSEVENT,MEETING,TRAINING,TRIP,SPORTSEVENT,SPORTSEVENT);
-			List<String> names = Arrays.asList("Floorball,Annual Meeting,Microservices Training,Sightseeing Trip,Football,Baseball".split(","));
-			List<String> places = Arrays.asList("Springfield Geneseo,Meeting Room,Conference Hall,Blue Lake,Near Stadium,Outside Premises".split(","));
-			List<Integer> months = Arrays.asList(3,5,6,7,2,8);
+			final List<EventType> types = Arrays.asList(SPORTSEVENT,MEETING,TRAINING,TRIP,SPORTSEVENT,SPORTSEVENT);
+			final List<String> names = Arrays.asList("Floorball,Annual Meeting,Microservices Training,Sightseeing Trip,Football,Baseball".split(","));
+			final List<String> places = Arrays.asList("Springfield Geneseo,Meeting Room,Conference Hall,Blue Lake,Near Stadium,Outside Premises".split(","));
+			final int[] years = {yearPast, yearFuture, yearFuture, yearFuture, yearPast, yearFuture};
+			final int[] months = {3,5,6,7,2,8};
 			
-			List<Account> accounts = new ArrayList<>();
-			List<Employee> employees = new ArrayList<>();
-			List<Event> events = new ArrayList<>();
-			List<Participation> participations = new ArrayList<>();
+			final List<Account> accounts = new ArrayList<>();
+			final List<Employee> employees = new ArrayList<>();
+			final List<Event> events = new ArrayList<>();
+			final List<Participation> participations = new ArrayList<>();
 			
 			IntStream.range(0, emails.size())
 			.forEach(idx -> {
@@ -92,7 +96,7 @@ public class BluePumpkinJpaApplication {
 			IntStream.range(0, types.size())
 			.forEach(idx -> {
 				events.add(eventRepository.save(new Event(types.get(idx), names.get(idx), 
-						places.get(idx), LocalDateTime.of(2015, months.get(idx), 1, 9, 30), null)));
+						places.get(idx), LocalDateTime.of(years[idx], months[idx], 1, 9, 30), null)));
 			});
 		
 			IntStream.rangeClosed(0, 2)

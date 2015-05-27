@@ -60,7 +60,7 @@ public class PersistenceTests {
 		assertThat(eventParticipations.size()).isEqualTo(1);
 		assertThat(eventParticipations.get(0).getEmployee().getAccount().getEmail())
 				.isEqualTo("sam.brown@bluepumpkin.com");
-		assertThat(eventParticipations.get(0).getEmployee().getDateOfBirth()).isEqualTo(LocalDate.of(1974, 4, 15));
+		assertThat(eventParticipations.get(0).getEmployee().getDateOfBirth()).isEqualTo(LocalDate.of(1974, 5, 27));
 		assertThat(eventParticipations.get(0).getEvent().getName()).isEqualTo("Floorball");
 	}
 	

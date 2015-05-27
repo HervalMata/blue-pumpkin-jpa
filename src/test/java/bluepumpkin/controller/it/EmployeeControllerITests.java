@@ -49,9 +49,13 @@ import bluepumpkin.domain.web.Birthday;
 //@Transactional
 public class EmployeeControllerITests {
 	
-	private final static int UPC_EVENTS_SIZE = 3;
-	private final static long SAM_ID = 1L;
-	private final static long MEETING_ID = 2L;
+	private static final int YEAR_FUTURE = 2025;
+	private static final long EMP_ID = 1L;
+	private static final String EMP_NAME = "Sam";
+	private static final long MEETING_ID = 2L;
+	private static final String MEETING_NAME = "Annual Meeting";
+	private static final String TRAINING_NAME = "Microservices Training";
+	private static final int UPC_EVENTS_SIZE = 4;
 	
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -96,14 +100,14 @@ public class EmployeeControllerITests {
 				.getModel().get("participations");
 		
 		assertThat(participations.get(0).getEvent().getConvertedDateTime().toString())
-		.isEqualTo("Fri May 01 09:30:00 CEST 2015");
+		.isEqualTo("Thu May 01 09:30:00 CEST " + YEAR_FUTURE);
 		
-		assertThat(participations.get(1).getEmployee().getFirstName()).isEqualTo("Sam");
-		assertThat(participations.get(1).getEvent().getName()).isEqualTo("Microservices Training");
+		assertThat(participations.get(1).getEmployee().getFirstName()).isEqualTo(EMP_NAME);
+		assertThat(participations.get(1).getEvent().getName()).isEqualTo(TRAINING_NAME);
 		assertThat(participations.get(1).getEvent().getConvertedDateTime().toString())
-			.isEqualTo("Mon Jun 01 09:30:00 CEST 2015");
+			.containsOnlyOnce("Jun 01 09:30:00 CEST " + YEAR_FUTURE);
 		
-		Birthday samBirthday = new Birthday("Sam", 41);
+		Birthday samBirthday = new Birthday(EMP_NAME, 41);
 		List<?> mAttrBirthdays = (List<?>) mvcResult.getModelAndView().getModel().get("birthdays");
 		Birthday mAttrSamBirthday = (Birthday) mAttrBirthdays.get(0);
 		
@@ -113,9 +117,9 @@ public class EmployeeControllerITests {
 	@Test
 	public void employeeHomeEmpId() throws Exception {
 	
-		mvcResult = mockMvc.perform(get("/{empId}", 1L))
+		mvcResult = mockMvc.perform(get("/{empId}", EMP_ID))
 				.andExpect(status().isOk())
-				.andExpect(model().size(1))
+				.andExpect(model().size(2))
 //				.andExpect(model().attributeExists("participations"))
 				.andExpect(model().attribute("participations", hasSize(2)))
 				.andExpect(view().name("employee/home"))
@@ -126,8 +130,8 @@ public class EmployeeControllerITests {
 		@SuppressWarnings("unchecked")
 		List<Participation> participations = (List<Participation>) mvcResult.getModelAndView()
 				.getModel().get("participations");
-		assertThat(participations.get(0).getEmployee().getFirstName()).isEqualTo("Sam");
-		assertThat(participations.get(0).getEvent().getName()).isEqualTo("Annual Meeting");
+		assertThat(participations.get(0).getEmployee().getFirstName()).isEqualTo(EMP_NAME);
+		assertThat(participations.get(0).getEvent().getName()).isEqualTo(MEETING_NAME);
 	}
 	
 	@Test

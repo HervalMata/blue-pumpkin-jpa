@@ -48,5 +48,5 @@ public class ServiceTests {
 		Date d = Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		System.out.println(d);
 	}
-
+	
 }

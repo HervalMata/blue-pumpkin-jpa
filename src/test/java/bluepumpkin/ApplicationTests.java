@@ -1,5 +1,7 @@
 package bluepumpkin;
 
+import javax.transaction.Transactional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -14,11 +16,13 @@ import bluepumpkin.domain.Account;
 import bluepumpkin.domain.Employee;
 import bluepumpkin.repository.AccountRepository;
 import bluepumpkin.repository.EmployeeRepository;
+import bluepumpkin.repository.TeamRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BluePumpkinJpaApplication.class)
 //@WebAppConfiguration
+@Transactional
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApplicationTests {
 
@@ -26,6 +30,8 @@ public class ApplicationTests {
 	private AccountRepository accountRepository;
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	@Autowired
+	private TeamRepository teamRepository;
 	
 	@Test
 	public void _01contextLoads() {
@@ -57,6 +63,12 @@ public class ApplicationTests {
 	
 	@Test
 	public void _03deletesAccountWhenDeletedReferencingEmployee() {
+		Employee emp = employeeRepository.findOne(1L);
+		emp.getTeams().forEach(t -> {
+			t.getEmployees().remove(emp);
+			teamRepository.save(t);
+		});
+		
 		employeeRepository.delete(1L);
 		
 		assertThat(accountRepository.findOne(1L)).isNull();
